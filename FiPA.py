@@ -22,6 +22,8 @@ if (len(sys.argv) < 2):
 grib = sys.argv[1]
 myloc = os.path.dirname(sys.argv[0])
 
+known_isobaric_levels = (1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10, 7, 5, 3, 2, 1)
+
 class FiPA():
     def __init__(self, gribFile, context_degrees=1, subplot_rows=1, subplot_cols=1, xsize=19.2, ysize=10.8):
         self.grib = gribFile
@@ -39,19 +41,21 @@ class FiPA():
         atime = prmsl.analDate.strftime("%Y-%m-%d %H%Mz")
         fh = prmsl.forecastTime
 
-        self.fig.suptitle("(test FiPA small scale. 2° or 10° expanse) GFS for " + str(lat) + ", " + str(lon)
+        self.fig.suptitle("(test FiPA small scale. 2° or 10° expanse) GFS for " + str(latitude) + ", " + str(longitude)
             + ". " +  atime +" analysis. Fcst hr " + str(fh))
 
     def newSubPlot(self):
         self.ax = self.fig.add_subplot(self.subrows, self.subcols, self.subidx, projection=ccrs.PlateCarree())
+        xh_pad = 0
+        if (self.subidx > (self.subrows * self.subcols)/2):
+            xh_pad = 0.25
+        self.fig.tight_layout(rect=[0, 0.03, 1, 0.97], h_pad=1.25 + xh_pad)
         self.subidx += 1
-        self.fig.tight_layout(rect=[0, 0.03, 1, 0.97], h_pad=1.25)
         #self.ax = plt.axes(projection=ccrs.PlateCarree())
         return self.ax
 
 
     def trim_array_to_extent(self, gribs, values):
-        #pdb.set_trace()
         lons = list(
                 np.linspace(float(gribs['longitudeOfFirstGridPointInDegrees']), 
                     float(gribs['longitudeOfLastGridPointInDegrees']),
@@ -63,7 +67,7 @@ class FiPA():
 
 
         e = self.context_degrees
-        (minlon, maxlon, minlat, maxlat) = (lon-e, lon+e, lat-e, lat+e)
+        (minlon, maxlon, minlat, maxlat) = (longitude-e, longitude+e, latitude-e, latitude+e)
 
 
         if 0:
@@ -125,14 +129,178 @@ class FiPA():
                           alpha=1
                           )
         self.g.linewidth=0.25
-        plt.plot(lon, lat, marker='o', markerfacecolor=None, color='red', markersize=8, alpha=0.8, 
+        plt.plot(longitude, latitude, marker='o', markerfacecolor=None, color='red', markersize=8, alpha=0.8, 
             transform=ccrs.PlateCarree())
+
+    def plot_pv(self, tempk, cint, context_degrees):
+        self.context_degrees = context_degrees
+        grbs = self.grbs
+
+        def trim_3d_data_to_extent(td): 
+            d_all = []
+            for d in td:
+                grid_lon, grid_lat, d = self.trim_array_to_extent(d, d.values)
+                d_all.append(d)
+            return grid_lon, grid_lat, np.array(d_all)
+        
+        t_in = grbs.select(shortName='t', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
+        grid_lon, grid_lat, t_in = trim_3d_data_to_extent(t_in)
+
+        u_in = grbs.select(shortName='u', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
+        grid_lon, grid_lat, u_in = trim_3d_data_to_extent(u_in)
+
+        v_in = grbs.select(shortName='v', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
+        grid_lon, grid_lat, v_in = trim_3d_data_to_extent(v_in)
+
+        hgt_in = grbs.select(shortName='gh', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
+        grid_lon, grid_lat, hgt_in = trim_3d_data_to_extent(hgt_in)
+
+
+        #############
+        """
+        Borrowed from 
+        https://github.com/udometer/potential-vorticity/blob/master/gfs_pv_1.2.py
+        """
+        
+        #constants
+        re=6.37e6
+        g=9.81
+        cp=1004.5
+        r=2*cp/7
+        kap=r/cp
+        omega=7.292e-5
+        pi=3.14159265
+
+        tpdef=2
+
+        lon1, lon2, lat1, lat2 = (grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
+
+        lat_in  = grid_lat[0:grid_lat.size-1,0:1].reshape(grid_lat[0].size)
+        lon_in  = grid_lon[0][:]
+        lev = list(known_isobaric_levels)
+        #lev.reverse()
+        lev = np.array(lev)
+
+        # get array indices for latitude-longitude range
+        # specified above
+        iy1 = np.argmin( np.abs( lat_in - lat1 ) )
+        iy2 = np.argmin( np.abs( lat_in - lat2 ) )
+        ix1 = np.argmin( np.abs( lon_in - lon1 ) )
+        ix2 = np.argmin( np.abs( lon_in - lon2 ) )
+
+
+        lon=lon_in[ix1:ix2]
+        lat=lat_in[iy1:iy2]
+
+        #pdb.set_trace()
+
+        t=t_in[:,iy1:iy2,ix1:ix2]
+        u=u_in[:,iy1:iy2,ix1:ix2]
+        v=v_in[:,iy1:iy2,ix1:ix2]
+        hgt=hgt_in[:,iy1:iy2,ix1:ix2]
+
+        # some prep work for derivatives
+        xlon,ylat=np.meshgrid(lon,lat)
+        dlony,dlonx=np.gradient(xlon)
+        dlaty,dlatx=np.gradient(ylat)
+        dx=re*np.cos(ylat*pi/180)*dlonx*pi/180
+        dy=re*dlaty*pi/180
+
+        # define potential temperature and Coriolis parameter
+        theta=t*(1.E5/(lev[:,np.newaxis,np.newaxis]*100))**kap
+        f=2*omega*np.sin(ylat*pi/180)
+
+        # calculate derivatives
+        # (np.gradient can handle 1D uneven spacing,
+        # so build that in for p, but do dx and dy 
+        # external to the function since they are 2D)
+        ddp_theta=np.gradient(theta,lev*100,axis=0)
+        ddx_theta=np.gradient(theta,axis=2)/dx
+        ddy_theta=np.gradient(theta,axis=1)/dy
+        ddp_u=np.gradient(u,lev*100,axis=0)
+        ddp_v=np.gradient(v,lev*100,axis=0)
+        ddx_v=np.gradient(v,axis=2)/dx
+        ddy_ucos=np.gradient(u*np.cos(ylat*pi/180),axis=1)/dy
+
+        # calculate contributions to PV and PV
+        absvort=ddx_v-(1/np.cos(ylat*pi/180))*ddy_ucos+f
+        pv_one=g*absvort*(-ddp_theta)
+        pv_two=g*(ddp_v*ddx_theta-ddp_u*ddy_theta)
+        pv=pv_one+pv_two
+
+        # calculate pressure of tropopause, Fortran-style (alas!)
+        # as well as potential temperature (theta) and height
+        #
+        # starting from 10hPa and working down, to avoid
+        # more complicated vertical structure higher up
+        #
+        nx=ix2-ix1+1
+        ny=iy2-iy1+1
+        nz=lev.size
+        nzs=np.argwhere(lev==10.0)[0,0]
+        tp=np.empty((ny-1,nx-1))*np.nan   # initialize as undef
+        tp_theta=np.empty((ny-1,nx-1))*np.nan   # initialize as undef
+        tp_hgt=np.empty((ny-1,nx-1))*np.nan   # initialize as undef
+
+        for ix in range(0,nx-1):
+            for iy in range(0,ny-1):
+                for iz in range(nzs,0,-1):
+                    if pv[iz,iy,ix]/1e-6<=tpdef:
+                        if np.isnan(tp[iy,ix]):
+                            tp[iy,ix]=(
+                            (lev[iz]*(pv[iz+1,iy,ix]-tpdef*1e-6)
+                            -lev[iz+1]*(pv[iz,iy,ix]-tpdef*1e-6))/
+                            (pv[iz+1,iy,ix]-pv[iz,iy,ix])
+                            )
+            
+                            tp_theta[iy,ix]=(
+                            ((lev[iz]-tp[iy,ix])*theta[iz+1,iy,ix]+
+                            (tp[iy,ix]-lev[iz+1])*theta[iz,iy,ix])/
+                            (lev[iz]-lev[iz+1])
+                            )
+                            
+                            tp_hgt[iy,ix]=(
+                            ((lev[iz]-tp[iy,ix])*hgt[iz+1,iy,ix]+
+                            (tp[iy,ix]-lev[iz+1])*hgt[iz,iy,ix])/
+                            (lev[iz]-lev[iz+1])
+                            )
+
+        # calculate PV on the tempkK isentropic surface
+        # (also not in a pythonic way)
+        nx=ix2-ix1+1
+        ny=iy2-iy1+1
+        nz=lev.size
+        pvtempk=np.zeros((ny-1,nx-1))  # initialize as undef
+        for ix in range(0,nx-1):
+            for iy in range(0,ny-1):
+                for iz in range(nz-2,0,-1):
+                    #print (theta[iz, iy, ix], theta[iz-1, iy, ix])
+                    if theta[iz,iy,ix]>=tempk:
+                        if theta[iz-1,iy,ix]<=tempk:
+                            if pvtempk[iy,ix] == 0:
+                                pvtempk[iy,ix]=(
+                                ((tempk-theta[iz-1,iy,ix])*pv[iz,iy,ix]+
+                                (theta[iz,iy,ix]-tempk)*pv[iz-1,iy,ix])/
+                                (theta[iz,iy,ix]-theta[iz-1,iy,ix])
+                                )
+
+        ax = self.newSubPlot()
+        self.setup_grid(grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
+        nlines = cint
+        shade_colors = 'RdBu_r'
+        c = ax.contourf(lon, lat, pvtempk/1e-6, nlines, cmap=shade_colors, alpha=1)
+        plt.colorbar(c)
+
+        #############
+        self.draw_boundaries()
+
+        title = str(tempk) + "K PV "
+        ax.set_title(title)
+
 
     def plot_combined_rh_mslp(self, levA, levB, cint, context_degrees):
         self.context_degrees = context_degrees
         grbs = self.grbs
-
-        known_isobaric_levels = [1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10, 7, 5, 3, 2, 1]
 
         if (levA > levB):
             lev1 = levA
@@ -163,9 +331,9 @@ class FiPA():
 
         rh_all = rh_all/len(gribs_at_lev)
 
-        ax = self.newSubPlot()
-
         grid_lon, grid_lat, rh_all = self.trim_array_to_extent(grb, rh_all)
+
+        ax = self.newSubPlot()
         self.setup_grid(grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
 
         shade_colors = LinearSegmentedColormap.from_list(
@@ -188,6 +356,13 @@ class FiPA():
         nlines = cint * 2 #int((mslp.max - mslp.min)/cint)
         c = ax.contour(grid_lon, grid_lat, mslpvalues, nlines, colors='k', linewidths=0.5, alpha=0.5)
 
+        ######################
+        """
+        This section was adapted from:
+        https://matplotlib.org/basemap/users/figures/plothighsandlows.py
+        via
+        https://matplotlib.org/basemap/users/examples.html
+        """
 
         def extrema(mat, mode='nearest', size=3):
             mn = minimum_filter(mat, size=size, mode=mode)
@@ -209,8 +384,6 @@ class FiPA():
         mxmin = grid_lon.min()
         mymax = grid_lat.max()
         mymin = grid_lat.min()
-
-        pdb.set_trace()
 
         xyplotted = []
         yoffset = 0.022 * (mymax - mymin)
@@ -240,8 +413,7 @@ class FiPA():
                             #bbox = dict(boxstyle="square", ec='None',fc=(1,1,1,0.5))
                             )
                     xyplotted.append((x,y))
-
-        #plt.text(x, y, "L", transform=ccrs.PlateCarree())
+        ######################
 
         plt.clabel(c, fmt="%d")
 
@@ -325,7 +497,7 @@ class FiPA():
         shade_colors = cc.cm['linear_kryw_0_100_c71_r']
         nlines = cint #int((absvvalues.max - absv.min)/cint)
 
-        print (absvvalues.min(), absvvalues.max())
+        #print (absvvalues.min(), absvvalues.max())
 
         c = ax.contourf(grid_lon, grid_lat, absvvalues * 100000, nlines, cmap=shade_colors, alpha=1, vmin=3, vmax=50, extend="both")
         plt.colorbar(c)
@@ -347,16 +519,18 @@ class FiPA():
 ###############
         #plt.savefig(grib + str(gh.dataDate) + "_" + str(gh.dataTime) + "_" + str(gh.forecastTime) +  "_" + str(gh.shortName) + "_" + str(gh.level) + '.png') # Set the output file name
 
-lat = 11.28
-lon = 76.95
+latitude = 11.28
+ongitude = 76.95
 fipa = FiPA(grib, 1, 2, 3, 19.2, 10.8 )
+#"""
 fipa.plot_gph_vort_wind(850, 10, 1)
 fipa.plot_gph_vort_wind(500, 10, 1)
 fipa.plot_combined_rh_mslp(700, 400, 10, 5)
-#fipa.plot_355k_pv()
+#"""
+fipa.plot_pv(355, 10, 5)
+fipa.plot_pv(330, 10, 5)
 fipa.plot_vertical_shear(200, 800, 10, 5)
 #fipa.plot_skew_t()
 
 plt.savefig(grib + "_FiPA"+ '.') # Set the output file name
-#pdb.set_trace()
 #vim ts=4
