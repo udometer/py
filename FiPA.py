@@ -189,15 +189,14 @@ class FiPA():
         ix2 = np.argmin( np.abs( lon_in - lon2 ) )
 
 
-        lon=lon_in[ix1:ix2]
-        lat=lat_in[iy1:iy2]
+        lon=lon_in[ix1:ix2+1]
+        lat=lat_in[iy1:iy2+1]
 
-        #pdb.set_trace()
 
-        t=t_in[:,iy1:iy2,ix1:ix2]
-        u=u_in[:,iy1:iy2,ix1:ix2]
-        v=v_in[:,iy1:iy2,ix1:ix2]
-        hgt=hgt_in[:,iy1:iy2,ix1:ix2]
+        t=t_in[:,iy1:iy2+1,ix1:ix2+1]
+        u=u_in[:,iy1:iy2+1,ix1:ix2+1]
+        v=v_in[:,iy1:iy2+1,ix1:ix2+1]
+        hgt=hgt_in[:,iy1:iy2+1,ix1:ix2+1]
 
         # some prep work for derivatives
         xlon,ylat=np.meshgrid(lon,lat)
@@ -238,12 +237,12 @@ class FiPA():
         ny=iy2-iy1+1
         nz=lev.size
         nzs=np.argwhere(lev==10.0)[0,0]
-        tp=np.empty((ny-1,nx-1))*np.nan   # initialize as undef
-        tp_theta=np.empty((ny-1,nx-1))*np.nan   # initialize as undef
-        tp_hgt=np.empty((ny-1,nx-1))*np.nan   # initialize as undef
+        tp=np.empty((ny,nx))*np.nan   # initialize as undef
+        tp_theta=np.empty((ny,nx))*np.nan   # initialize as undef
+        tp_hgt=np.empty((ny,nx))*np.nan   # initialize as undef
 
-        for ix in range(0,nx-1):
-            for iy in range(0,ny-1):
+        for ix in range(0,nx):
+            for iy in range(0,ny):
                 for iz in range(nzs,0,-1):
                     if pv[iz,iy,ix]/1e-6<=tpdef:
                         if np.isnan(tp[iy,ix]):
@@ -270,9 +269,9 @@ class FiPA():
         nx=ix2-ix1+1
         ny=iy2-iy1+1
         nz=lev.size
-        pvtempk=np.zeros((ny-1,nx-1))  # initialize as undef
-        for ix in range(0,nx-1):
-            for iy in range(0,ny-1):
+        pvtempk=np.zeros((ny,nx))  # initialize as undef
+        for ix in range(0,nx):
+            for iy in range(0,ny):
                 for iz in range(nz-2,0,-1):
                     #print (theta[iz, iy, ix], theta[iz-1, iy, ix])
                     if theta[iz,iy,ix]>=tempk:
@@ -286,10 +285,10 @@ class FiPA():
 
         ax = self.newSubPlot()
         self.setup_grid(grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
-        nlines = cint
+        clevs=np.arange(-10,11,1)
         shade_colors = 'RdBu_r'
-        c = ax.contourf(lon, lat, pvtempk/1e-6, nlines, cmap=shade_colors, alpha=1)
-        plt.colorbar(c)
+        c = ax.contourf(lon, lat, pvtempk/1e-6, clevs, cmap=shade_colors, alpha=1, extend="both")
+        plt.colorbar(c, ticks=clevs)
 
         #############
         self.draw_boundaries()
@@ -347,9 +346,10 @@ class FiPA():
                 "#c07c3b", "#a6642a", "#8b4c1c", "#6d3b14", "#512a0c"],
                 N=21
                 )
-        c = ax.contourf(grid_lon, grid_lat, rh_all, 10, cmap=shade_colors.reversed(), 
+        clevs=np.arange(0,105,5)
+        c = ax.contourf(grid_lon, grid_lat, rh_all, clevs, cmap=shade_colors.reversed(), 
                 vmin=0, vmax=100, extend="both", alpha=1)
-        plt.colorbar(c)
+        plt.colorbar(c, ticks=clevs)
 
         mslp = grbs.select(shortName='prmsl')[0]
         grid_lon, grid_lat, mslpvalues = self.trim_array_to_extent(mslp, mslp.values)
@@ -460,8 +460,9 @@ class FiPA():
         clist.insert(0, '#ffffff');
         shade_colors = LinearSegmentedColormap.from_list(
             'whiteRainbow', clist)
-        c = ax.contourf(grid_lon, grid_lat, w, nlines, cmap=shade_colors, alpha=1, vmin=5, extend="both")
-        plt.colorbar(c)
+        clevs=np.arange(5,105,5)
+        c = ax.contourf(grid_lon, grid_lat, w, clevs, cmap=shade_colors, alpha=1, vmin=5, extend="both")
+        plt.colorbar(c, ticks=clevs)
 
         ax.streamplot(grid_lon, grid_lat, du, dv, density=1, transform=ccrs.PlateCarree(), linewidth=0.5, color=(0.0, 0.0, 0.0, 1))
         self.draw_boundaries()
@@ -499,8 +500,10 @@ class FiPA():
 
         #print (absvvalues.min(), absvvalues.max())
 
-        c = ax.contourf(grid_lon, grid_lat, absvvalues * 100000, nlines, cmap=shade_colors, alpha=1, vmin=3, vmax=50, extend="both")
-        plt.colorbar(c)
+        clevs=np.arange(5, 80,5)
+        clevs=np.insert(clevs, 0, 3)
+        c = ax.contourf(grid_lon, grid_lat, absvvalues * 100000, clevs, cmap=shade_colors, alpha=1, vmin=3, extend="both")
+        plt.colorbar(c, ticks=clevs)
 ###############
         nlines = cint #int((gh.max - gh.min)/cint)
         c = ax.contour(grid_lon, grid_lat, ghvalues, nlines, cmap='hsv', linewidths=0.75, alpha=1)
@@ -520,7 +523,7 @@ class FiPA():
         #plt.savefig(grib + str(gh.dataDate) + "_" + str(gh.dataTime) + "_" + str(gh.forecastTime) +  "_" + str(gh.shortName) + "_" + str(gh.level) + '.png') # Set the output file name
 
 latitude = 11.28
-ongitude = 76.95
+longitude = 76.95
 fipa = FiPA(grib, 1, 2, 3, 19.2, 10.8 )
 #"""
 fipa.plot_gph_vort_wind(850, 10, 1)
