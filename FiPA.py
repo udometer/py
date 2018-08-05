@@ -7,11 +7,12 @@ import colorcet as cc
 import cartopy.crs as ccrs
 import cartopy.io.shapereader as shapereader
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+from scipy.interpolate import RectBivariateSpline
 from scipy.ndimage.filters import maximum_filter, minimum_filter, gaussian_filter
 from matplotlib.colors import LinearSegmentedColormap
 import numpy as np
 import pdb
-import sys, os
+import sys, os, math
 
 print (sys.argv)
 
@@ -19,10 +20,15 @@ if (len(sys.argv) < 2):
     print ("Usage: ", sys.argv[0], " <grib file>")
     sys.exit(1)
 
+latitude = 11.28
+longitude = 76.95
+
+knots_per_m = 1.94384
 grib = sys.argv[1]
 myloc = os.path.dirname(sys.argv[0])
 
 known_isobaric_levels = (1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10, 7, 5, 3, 2, 1)
+known_isobaric_levels_to_100 = (1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100)
 
 class FiPA():
     def __init__(self, gribFile, context_degrees=1, subplot_rows=1, subplot_cols=1, xsize=19.2, ysize=10.8):
@@ -34,15 +40,13 @@ class FiPA():
         self.IndiaShapeFile = os.path.join(myloc, 'Shapefiles', 'India.shp')
 
         self.grbs = pygrib.open(grib)
-        self.fig = plt.figure(figsize=(xsize, ysize), clear=False, tight_layout=False)
         self.context_degrees = context_degrees #degree
 
         prmsl = self.grbs.select(shortName='prmsl')[0]
-        atime = prmsl.analDate.strftime("%Y-%m-%d %H%Mz")
-        fh = prmsl.forecastTime
+        self.atime = prmsl.analDate.strftime("%Y-%m-%d %H%Mz")
+        self.fh = prmsl.forecastTime
 
-        self.fig.suptitle("(test FiPA small scale. 2° or 10° expanse) GFS for " + str(latitude) + ", " + str(longitude)
-            + ". " +  atime +" analysis. Fcst hr " + str(fh))
+        self.suptitle = "(test FiPA small scale. 2° or 10° expanse) GFS for " + str(latitude) + ", " + str(longitude) + ". " +  self.atime +" analysis. Fcst hr " + str(self.fh)
 
     def newSubPlot(self):
         self.ax = self.fig.add_subplot(self.subrows, self.subcols, self.subidx, projection=ccrs.PlateCarree())
@@ -56,30 +60,23 @@ class FiPA():
 
 
     def trim_array_to_extent(self, gribs, values):
-        lons = list(
-                np.linspace(float(gribs['longitudeOfFirstGridPointInDegrees']), 
-                    float(gribs['longitudeOfLastGridPointInDegrees']),
-                    int(gribs['Ni'])))
+        first_longitude = float(gribs['longitudeOfFirstGridPointInDegrees'])
+        last_longitude = float(gribs['longitudeOfLastGridPointInDegrees'])
+        Ni = gribs['Ni']
 
-        lats = list(np.linspace(float(gribs['latitudeOfFirstGridPointInDegrees']),
-            float(gribs['latitudeOfLastGridPointInDegrees']),
-            int(gribs['Nj'])))
+        first_latitude = float(gribs['latitudeOfFirstGridPointInDegrees'])
+        last_latitude = float(gribs['latitudeOfLastGridPointInDegrees'])
+        Nj = gribs['Nj']
+
+        lons = list(np.linspace(first_longitude, last_longitude, Ni))
+        lats = list(np.linspace(first_latitude, last_latitude, Nj))
 
 
         e = self.context_degrees
-        (minlon, maxlon, minlat, maxlat) = (longitude-e, longitude+e, latitude-e, latitude+e)
-
-
-        if 0:
-            minlat = min(lats)
-            maxlat = max(lats)
-            minlon = min(lons)
-            maxlon = max(lons)
-
         def index(l, v):
             idx = -1
             i = 0
-            while i <= len(l):
+            while i < len(l):
                 if (l[i] <= v):
                     idx = i
                 else:
@@ -88,13 +85,49 @@ class FiPA():
 
             return idx
 
-        x1 = index(lons, minlon)
-        x2 = index(lons, maxlon)
+        step_lat = step_lon = e
+        (minlon, maxlon, minlat, maxlat) = (longitude-step_lon, longitude+step_lon, latitude-step_lat, latitude+step_lat)
 
-        y1 = index(lats, minlat)
-        y2 = index(lats, maxlat)
+        def get_extant_indices():
+            x1 = index(lons, minlon)
+            x2 = index(lons, maxlon)
+            
+            y1 = index(lats, minlat)
+            y2 = index(lats, maxlat)
+            return (x1, x2, y1, y2)
+
+        (x1, x2, y1, y2) = get_extant_indices()
+
+        if (e == 0 and (lons[x1] != longitude or lats[y1] != latitude)):
+            import scipy
+            #the location does not match exactly.
+            #interpolate
+            step_lon = (last_longitude - first_longitude)/(Ni-1)
+            step_lat = (last_latitude - first_latitude)/(Nj-1)
+            k = step_lon * 0
+            minlon = (longitude // step_lon) * step_lon - k
+            maxlon = minlon + step_lon + k
+            
+            minlat = (latitude//step_lat) * step_lat - k
+            maxlat = minlat + step_lat + k
+
+            (x1, x2, y1, y2) = get_extant_indices()
+
+            #method recommended by matplotlib for 
+            #regular sized rectangular grids.
+            tlons = np.array(lons[x1:x2+1])
+            tlats = np.array(lats[y1:y2+1]),
+            tvals = values[y1:y2+1, x1:x2+1]
+
+            f = scipy.interpolate.interp2d(tlons, tlats, tvals)
+            nval = f([longitude], [latitude])
+
+            lons = np.linspace(longitude, longitude, 0)
+            lats = np.linspace(latitude, latitude, 0)
+            x1=x2=y1=y2=0
 
         grid_lon, grid_lat = np.meshgrid(lons[x1:x2+1], lats[y1:y2+1]) #regularly spaced 2D grid
+
         pruned_values = []
         for row in values[y1:y2+1]:
             pruned_values.append(row[x1:x2+1])
@@ -132,28 +165,73 @@ class FiPA():
         plt.plot(longitude, latitude, marker='o', markerfacecolor=None, color='red', markersize=8, alpha=0.8, 
             transform=ccrs.PlateCarree())
 
+    def trim_3d_data_to_extent(self, td): 
+        d_all = []
+        for d in td:
+            grid_lon, grid_lat, dt = self.trim_array_to_extent(d, d.values)
+            d_all.append((d.level, dt))
+        d_all = sorted(d_all)
+        d_all.reverse()
+        ds = []
+        for d in d_all:
+            ds.append(d[1])
+        return grid_lon, grid_lat, np.array(ds)
+    
+    def plot_skew_t(self):
+        import FiPAskewt as skewt
+        grbs = self.grbs
+
+        self.context_degrees = 0;
+
+        p = list(known_isobaric_levels_to_100)
+        p = np.array(p)
+
+        def get_1d_field(sn):
+            f = grbs.select(shortName=sn, level=known_isobaric_levels_to_100, typeOfLevel='isobaricInhPa')
+            grid_lon, grid_lat, fvalues = self.trim_3d_data_to_extent(f)
+            f = fvalues.reshape(fvalues.size)
+            return grid_lon, grid_lat, f
+
+        grid_lon, grid_lat, RH = get_1d_field('r')
+        grid_lon, grid_lat, Tc = get_1d_field('t')
+        Tc -= 273.15
+        grid_lon, grid_lat, z = get_1d_field('gh')
+        grid_lon, grid_lat, u = get_1d_field('u')
+        grid_lon, grid_lat, v = get_1d_field('v')
+
+        #th =  (273.15 + Tc) * ( 1000 / p ) ** 0.286 + (3 * (RH * (3.884266 * 10 ** (( 7.5 * Tc ) / ( 237.7 + Tc )) ) /100 ))
+
+        kappa_d = 0.2854131450730834
+        th = (Tc+273.15)/((1000/p)**-kappa_d)
+
+        def rh2mixr(RHp, PhPa, Tc):
+            Es = 6.11*10**(7.5*Tc/(237.7+Tc))
+            Ms = 0.622 * Es/(PhPa - Es)
+            M= RHp*Ms/100
+            return M #g/kg
+
+        qv = rh2mixr(RH, p, Tc)
+
+        #skewt.ptop = 150
+        #skewt.pbottom = 1010
+        self.suptitle = "(test FiPA) GFS" +  self.atime +" analysis. Fcst hr " + str(self.fh)
+        skewt.plot(str(latitude) + ", " + str(longitude), z, th, p * 100, qv, u, v, grib + '_skewt.png', title=self.suptitle);
+
     def plot_pv(self, tempk, cint, context_degrees):
         self.context_degrees = context_degrees
         grbs = self.grbs
 
-        def trim_3d_data_to_extent(td): 
-            d_all = []
-            for d in td:
-                grid_lon, grid_lat, d = self.trim_array_to_extent(d, d.values)
-                d_all.append(d)
-            return grid_lon, grid_lat, np.array(d_all)
-        
         t_in = grbs.select(shortName='t', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
-        grid_lon, grid_lat, t_in = trim_3d_data_to_extent(t_in)
+        grid_lon, grid_lat, t_in = self.trim_3d_data_to_extent(t_in)
 
         u_in = grbs.select(shortName='u', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
-        grid_lon, grid_lat, u_in = trim_3d_data_to_extent(u_in)
+        grid_lon, grid_lat, u_in = self.trim_3d_data_to_extent(u_in)
 
         v_in = grbs.select(shortName='v', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
-        grid_lon, grid_lat, v_in = trim_3d_data_to_extent(v_in)
+        grid_lon, grid_lat, v_in = self.trim_3d_data_to_extent(v_in)
 
         hgt_in = grbs.select(shortName='gh', level=known_isobaric_levels, typeOfLevel='isobaricInhPa')
-        grid_lon, grid_lat, hgt_in = trim_3d_data_to_extent(hgt_in)
+        grid_lon, grid_lat, hgt_in = self.trim_3d_data_to_extent(hgt_in)
 
 
         #############
@@ -169,7 +247,7 @@ class FiPA():
         r=2*cp/7
         kap=r/cp
         omega=7.292e-5
-        pi=3.14159265
+        pi=math.pi
 
         tpdef=2
 
@@ -178,7 +256,6 @@ class FiPA():
         lat_in  = grid_lat[0:grid_lat.size-1,0:1].reshape(grid_lat[0].size)
         lon_in  = grid_lon[0][:]
         lev = list(known_isobaric_levels)
-        #lev.reverse()
         lev = np.array(lev)
 
         # get array indices for latitude-longitude range
@@ -227,61 +304,38 @@ class FiPA():
         pv_two=g*(ddp_v*ddx_theta-ddp_u*ddy_theta)
         pv=pv_one+pv_two
 
-        # calculate pressure of tropopause, Fortran-style (alas!)
-        # as well as potential temperature (theta) and height
-        #
-        # starting from 10hPa and working down, to avoid
-        # more complicated vertical structure higher up
-        #
-        nx=ix2-ix1+1
-        ny=iy2-iy1+1
-        nz=lev.size
-        nzs=np.argwhere(lev==10.0)[0,0]
-        tp=np.empty((ny,nx))*np.nan   # initialize as undef
-        tp_theta=np.empty((ny,nx))*np.nan   # initialize as undef
-        tp_hgt=np.empty((ny,nx))*np.nan   # initialize as undef
-
-        for ix in range(0,nx):
-            for iy in range(0,ny):
-                for iz in range(nzs,0,-1):
-                    if pv[iz,iy,ix]/1e-6<=tpdef:
-                        if np.isnan(tp[iy,ix]):
-                            tp[iy,ix]=(
-                            (lev[iz]*(pv[iz+1,iy,ix]-tpdef*1e-6)
-                            -lev[iz+1]*(pv[iz,iy,ix]-tpdef*1e-6))/
-                            (pv[iz+1,iy,ix]-pv[iz,iy,ix])
-                            )
-            
-                            tp_theta[iy,ix]=(
-                            ((lev[iz]-tp[iy,ix])*theta[iz+1,iy,ix]+
-                            (tp[iy,ix]-lev[iz+1])*theta[iz,iy,ix])/
-                            (lev[iz]-lev[iz+1])
-                            )
-                            
-                            tp_hgt[iy,ix]=(
-                            ((lev[iz]-tp[iy,ix])*hgt[iz+1,iy,ix]+
-                            (tp[iy,ix]-lev[iz+1])*hgt[iz,iy,ix])/
-                            (lev[iz]-lev[iz+1])
-                            )
-
         # calculate PV on the tempkK isentropic surface
         # (also not in a pythonic way)
         nx=ix2-ix1+1
         ny=iy2-iy1+1
         nz=lev.size
         pvtempk=np.zeros((ny,nx))  # initialize as undef
+        #utempk=np.zeros((ny,nx))  # initialize as undef
+        #vtempk=np.zeros((ny,nx))  # initialize as undef
+        #ptempk=np.zeros((ny,nx))  # initialize as undef
         for ix in range(0,nx):
             for iy in range(0,ny):
-                for iz in range(nz-2,0,-1):
+                for iz in range(nz-2,0,-1):#iz - increasing order of pressure
                     #print (theta[iz, iy, ix], theta[iz-1, iy, ix])
-                    if theta[iz,iy,ix]>=tempk:
-                        if theta[iz-1,iy,ix]<=tempk:
-                            if pvtempk[iy,ix] == 0:
-                                pvtempk[iy,ix]=(
-                                ((tempk-theta[iz-1,iy,ix])*pv[iz,iy,ix]+
-                                (theta[iz,iy,ix]-tempk)*pv[iz-1,iy,ix])/
-                                (theta[iz,iy,ix]-theta[iz-1,iy,ix])
-                                )
+                    if (theta[iz,iy,ix]>=tempk and
+                       theta[iz-1,iy,ix]<=tempk and
+                       pvtempk[iy,ix] == 0):
+                            ti = (iz, iy, ix)
+                            ni = (iz-1, iy, ix)
+                            ti2 = (iy, ix)
+                            
+                            pvtempk[ti2]=(
+                            ((tempk-theta[ni])*pv[ti]+
+                            (theta[ti]-tempk)*pv[ni])/
+                            (theta[ti]-theta[ni])
+                            )
+
+                            """
+                            #an average is probably not the most accurate calculation
+                            utempk[ti2] = (u[ni] + u[ti])/2 * knots_per_m
+                            vtempk[ti2] = (v[ni] + v[ti])/2 * knots_per_m
+                            ptempk[ti2] = (lev[iz] + lev[iz-1])/2
+                            """
 
         ax = self.newSubPlot()
         self.setup_grid(grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
@@ -290,10 +344,16 @@ class FiPA():
         c = ax.contourf(lon, lat, pvtempk/1e-6, clevs, cmap=shade_colors, alpha=1, extend="both")
         plt.colorbar(c, ticks=clevs)
 
+        """
+        ax.barbs(lon, lat, utempk, vtempk, transform=ccrs.PlateCarree(), linewidth=0.5, regrid_shape=10, length=5)
+        nlines = cint * 2
+        c = ax.contour(lon, lat, ptempk, nlines, colors='k', alpha=0.75)
+        """
+
         #############
         self.draw_boundaries()
 
-        title = str(tempk) + "K PV "
+        title = str(tempk) + "K PV, Wind (kt) "
         ax.set_title(title)
 
 
@@ -449,7 +509,7 @@ class FiPA():
         #VWSPT = {[Du(r = 0)]^2 + [Dv(r = 0)]^2}1/2
         du = u1 - u2
         dv = v1 - v2
-        w = np.sqrt(np.square(du) + np.square(dv)) * 1.94384
+        w = np.sqrt(np.square(du) + np.square(dv)) * knots_per_m
 
         nlines = cint #(w.max() - w.min()) / cint
 
@@ -510,8 +570,8 @@ class FiPA():
         plt.clabel(c, fmt="%d")
 ###############
         #direction = ((((270 - np.arctan2(u.values, v.values) * 180 / np.pi) + 00) % 360)/90).astype(int)
-        ukvalues = uvalues * 1.94384 #convert from meters per second to knots
-        vkvalues = vvalues * 1.94384
+        ukvalues = uvalues * knots_per_m #convert from meters per second to knots
+        vkvalues = vvalues * knots_per_m
         ax.streamplot(grid_lon, grid_lat, uvalues, vvalues, density=3, transform=ccrs.PlateCarree(), linewidth=0.5, arrowsize=0.00001, color=(0.5, 0.5, 0.5, 0.5))
         ax.barbs(grid_lon, grid_lat, ukvalues, vkvalues, transform=ccrs.PlateCarree(), linewidth=0.5, regrid_shape=10, length=5)
 ###############
@@ -522,18 +582,24 @@ class FiPA():
 ###############
         #plt.savefig(grib + str(gh.dataDate) + "_" + str(gh.dataTime) + "_" + str(gh.forecastTime) +  "_" + str(gh.shortName) + "_" + str(gh.level) + '.png') # Set the output file name
 
-latitude = 11.28
-longitude = 76.95
-fipa = FiPA(grib, 1, 2, 3, 19.2, 10.8 )
-#"""
-fipa.plot_gph_vort_wind(850, 10, 1)
-fipa.plot_gph_vort_wind(500, 10, 1)
-fipa.plot_combined_rh_mslp(700, 400, 10, 5)
-#"""
-fipa.plot_pv(355, 10, 5)
-fipa.plot_pv(330, 10, 5)
-fipa.plot_vertical_shear(200, 800, 10, 5)
-#fipa.plot_skew_t()
 
-plt.savefig(grib + "_FiPA"+ '.') # Set the output file name
+if __name__ == '__main__':
+    xsize = 19.2
+    ysize = 10.8
+    #"""
+    fipa = FiPA(grib, 1, 2, 3, xsize, ysize)
+    fipa.fig = plt.figure(figsize=(xsize, ysize), clear=False, tight_layout=False)
+    fipa.fig.suptitle(fipa.suptitle)
+    fipa.plot_gph_vort_wind(850, 10, 1)
+    fipa.plot_gph_vort_wind(500, 10, 1)
+    fipa.plot_combined_rh_mslp(700, 400, 10, 5)
+    fipa.plot_pv(355, 10, 5)
+    fipa.plot_pv(330, 10, 5)
+    fipa.plot_vertical_shear(200, 800, 10, 5)
+    plt.savefig(grib + "_FiPA"+ '.png') # Set the output file name
+    plt.close()
+    #"""
+    fipa2 = FiPA(grib, 1, 1, 1, xsize, ysize)
+    fipa2.plot_skew_t()
+
 #vim ts=4
