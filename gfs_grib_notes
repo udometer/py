@@ -1,0 +1,738 @@
+pressure levels [1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10, 7, 5, 3, 2, 1]
+
+0 surface Visibility vis m
+0 unknown U component of wind u m s**-1
+0 unknown V component of wind v m s**-1
+0 unknown Ventilation Rate VRATE m**2 s**-1
+0 surface Wind speed (gust) gust m s**-1
+1 isobaricInhPa Geopotential Height gh gpm
+1 isobaricInhPa Temperature t K
+1 isobaricInhPa Relative humidity r %
+1 isobaricInhPa U component of wind u m s**-1
+1 isobaricInhPa V component of wind v m s**-1
+1 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+2 isobaricInhPa Geopotential Height gh gpm
+2 isobaricInhPa Temperature t K
+2 isobaricInhPa Relative humidity r %
+2 isobaricInhPa U component of wind u m s**-1
+2 isobaricInhPa V component of wind v m s**-1
+2 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+3 isobaricInhPa Geopotential Height gh gpm
+3 isobaricInhPa Temperature t K
+3 isobaricInhPa Relative humidity r %
+3 isobaricInhPa U component of wind u m s**-1
+3 isobaricInhPa V component of wind v m s**-1
+3 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+5 isobaricInhPa Geopotential Height gh gpm
+5 isobaricInhPa Temperature t K
+5 isobaricInhPa Relative humidity r %
+5 isobaricInhPa U component of wind u m s**-1
+5 isobaricInhPa V component of wind v m s**-1
+5 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+7 isobaricInhPa Geopotential Height gh gpm
+7 isobaricInhPa Temperature t K
+7 isobaricInhPa Relative humidity r %
+7 isobaricInhPa U component of wind u m s**-1
+7 isobaricInhPa V component of wind v m s**-1
+7 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+10 isobaricInhPa Geopotential Height gh gpm
+10 isobaricInhPa Temperature t K
+10 isobaricInhPa Relative humidity r %
+10 isobaricInhPa U component of wind u m s**-1
+10 isobaricInhPa V component of wind v m s**-1
+10 isobaricInhPa Absolute vorticity absv s**-1
+10 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+20 isobaricInhPa Geopotential Height gh gpm
+20 isobaricInhPa Temperature t K
+20 isobaricInhPa Relative humidity r %
+20 isobaricInhPa U component of wind u m s**-1
+20 isobaricInhPa V component of wind v m s**-1
+20 isobaricInhPa Absolute vorticity absv s**-1
+20 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+30 isobaricInhPa Geopotential Height gh gpm
+30 isobaricInhPa Temperature t K
+30 isobaricInhPa Relative humidity r %
+30 isobaricInhPa U component of wind u m s**-1
+30 isobaricInhPa V component of wind v m s**-1
+30 isobaricInhPa Absolute vorticity absv s**-1
+30 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+50 isobaricInhPa Geopotential Height gh gpm
+50 isobaricInhPa Temperature t K
+50 isobaricInhPa Relative humidity r %
+50 isobaricInhPa U component of wind u m s**-1
+50 isobaricInhPa V component of wind v m s**-1
+50 isobaricInhPa Absolute vorticity absv s**-1
+50 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+70 isobaricInhPa Geopotential Height gh gpm
+70 isobaricInhPa Temperature t K
+70 isobaricInhPa Relative humidity r %
+70 isobaricInhPa U component of wind u m s**-1
+70 isobaricInhPa V component of wind v m s**-1
+70 isobaricInhPa Absolute vorticity absv s**-1
+70 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+100 isobaricInhPa Geopotential Height gh gpm
+100 isobaricInhPa Temperature t K
+100 isobaricInhPa Relative humidity r %
+100 isobaricInhPa Vertical velocity w Pa s**-1
+100 isobaricInhPa U component of wind u m s**-1
+100 isobaricInhPa V component of wind v m s**-1
+100 isobaricInhPa Absolute vorticity absv s**-1
+100 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+100 isobaricInhPa Icing severity ICSEV Numeric
+100 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+150 isobaricInhPa Geopotential Height gh gpm
+150 isobaricInhPa Temperature t K
+150 isobaricInhPa Relative humidity r %
+150 isobaricInhPa Vertical velocity w Pa s**-1
+150 isobaricInhPa U component of wind u m s**-1
+150 isobaricInhPa V component of wind v m s**-1
+150 isobaricInhPa Absolute vorticity absv s**-1
+150 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+150 isobaricInhPa Icing severity ICSEV Numeric
+150 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+200 isobaricInhPa Geopotential Height gh gpm
+200 isobaricInhPa Temperature t K
+200 isobaricInhPa Relative humidity r %
+200 isobaricInhPa Vertical velocity w Pa s**-1
+200 isobaricInhPa U component of wind u m s**-1
+200 isobaricInhPa V component of wind v m s**-1
+200 isobaricInhPa Absolute vorticity absv s**-1
+200 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+200 isobaricInhPa Icing severity ICSEV Numeric
+200 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+250 isobaricInhPa Geopotential Height gh gpm
+250 isobaricInhPa Temperature t K
+250 isobaricInhPa Relative humidity r %
+250 isobaricInhPa Vertical velocity w Pa s**-1
+250 isobaricInhPa U component of wind u m s**-1
+250 isobaricInhPa V component of wind v m s**-1
+250 isobaricInhPa Absolute vorticity absv s**-1
+250 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+250 isobaricInhPa Icing severity ICSEV Numeric
+250 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+300 isobaricInhPa Geopotential Height gh gpm
+300 isobaricInhPa Temperature t K
+300 isobaricInhPa Relative humidity r %
+300 isobaricInhPa Vertical velocity w Pa s**-1
+300 isobaricInhPa U component of wind u m s**-1
+300 isobaricInhPa V component of wind v m s**-1
+300 isobaricInhPa Absolute vorticity absv s**-1
+300 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+300 isobaricInhPa Icing severity ICSEV Numeric
+300 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+350 isobaricInhPa Geopotential Height gh gpm
+350 isobaricInhPa Temperature t K
+350 isobaricInhPa Relative humidity r %
+350 isobaricInhPa Vertical velocity w Pa s**-1
+350 isobaricInhPa U component of wind u m s**-1
+350 isobaricInhPa V component of wind v m s**-1
+350 isobaricInhPa Absolute vorticity absv s**-1
+350 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+350 isobaricInhPa Icing severity ICSEV Numeric
+350 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+400 isobaricInhPa Geopotential Height gh gpm
+400 isobaricInhPa Temperature t K
+400 isobaricInhPa Relative humidity r %
+400 isobaricInhPa Vertical velocity w Pa s**-1
+400 isobaricInhPa U component of wind u m s**-1
+400 isobaricInhPa V component of wind v m s**-1
+400 isobaricInhPa Absolute vorticity absv s**-1
+400 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+400 isobaricInhPa Icing severity ICSEV Numeric
+400 isobaricInhPa Ozone mixing ratio o3mr kg kg**-1
+450 isobaricInhPa Geopotential Height gh gpm
+450 isobaricInhPa Temperature t K
+450 isobaricInhPa Relative humidity r %
+450 isobaricInhPa Vertical velocity w Pa s**-1
+450 isobaricInhPa U component of wind u m s**-1
+450 isobaricInhPa V component of wind v m s**-1
+450 isobaricInhPa Absolute vorticity absv s**-1
+450 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+450 isobaricInhPa Icing severity ICSEV Numeric
+500 isobaricInhPa Geopotential Height gh gpm
+500 isobaricInhPa Temperature t K
+500 isobaricInhPa Relative humidity r %
+500 isobaricInhPa Vertical velocity w Pa s**-1
+500 isobaricInhPa U component of wind u m s**-1
+500 isobaricInhPa V component of wind v m s**-1
+500 isobaricInhPa Absolute vorticity absv s**-1
+500 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+500 isobaricInhPa Icing severity ICSEV Numeric
+550 isobaricInhPa Geopotential Height gh gpm
+550 isobaricInhPa Temperature t K
+550 isobaricInhPa Relative humidity r %
+550 isobaricInhPa Vertical velocity w Pa s**-1
+550 isobaricInhPa U component of wind u m s**-1
+550 isobaricInhPa V component of wind v m s**-1
+550 isobaricInhPa Absolute vorticity absv s**-1
+550 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+550 isobaricInhPa Icing severity ICSEV Numeric
+600 isobaricInhPa Geopotential Height gh gpm
+600 isobaricInhPa Temperature t K
+600 isobaricInhPa Relative humidity r %
+600 isobaricInhPa Vertical velocity w Pa s**-1
+600 isobaricInhPa U component of wind u m s**-1
+600 isobaricInhPa V component of wind v m s**-1
+600 isobaricInhPa Absolute vorticity absv s**-1
+600 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+600 isobaricInhPa Icing severity ICSEV Numeric
+650 isobaricInhPa Geopotential Height gh gpm
+650 isobaricInhPa Temperature t K
+650 isobaricInhPa Relative humidity r %
+650 isobaricInhPa Vertical velocity w Pa s**-1
+650 isobaricInhPa U component of wind u m s**-1
+650 isobaricInhPa V component of wind v m s**-1
+650 isobaricInhPa Absolute vorticity absv s**-1
+650 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+650 isobaricInhPa Icing severity ICSEV Numeric
+700 isobaricInhPa Geopotential Height gh gpm
+700 isobaricInhPa Temperature t K
+700 isobaricInhPa Relative humidity r %
+700 isobaricInhPa Vertical velocity w Pa s**-1
+700 isobaricInhPa U component of wind u m s**-1
+700 isobaricInhPa V component of wind v m s**-1
+700 isobaricInhPa Absolute vorticity absv s**-1
+700 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+700 isobaricInhPa Icing severity ICSEV Numeric
+750 isobaricInhPa Geopotential Height gh gpm
+750 isobaricInhPa Temperature t K
+750 isobaricInhPa Relative humidity r %
+750 isobaricInhPa Vertical velocity w Pa s**-1
+750 isobaricInhPa U component of wind u m s**-1
+750 isobaricInhPa V component of wind v m s**-1
+750 isobaricInhPa Absolute vorticity absv s**-1
+750 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+750 isobaricInhPa Icing severity ICSEV Numeric
+800 isobaricInhPa Geopotential Height gh gpm
+800 isobaricInhPa Temperature t K
+800 isobaricInhPa Relative humidity r %
+800 isobaricInhPa Vertical velocity w Pa s**-1
+800 isobaricInhPa U component of wind u m s**-1
+800 isobaricInhPa V component of wind v m s**-1
+800 isobaricInhPa Absolute vorticity absv s**-1
+800 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+800 isobaricInhPa Icing severity ICSEV Numeric
+850 isobaricInhPa Geopotential Height gh gpm
+850 isobaricInhPa Temperature t K
+850 isobaricInhPa Relative humidity r %
+850 isobaricInhPa Vertical velocity w Pa s**-1
+850 isobaricInhPa U component of wind u m s**-1
+850 isobaricInhPa V component of wind v m s**-1
+850 isobaricInhPa Absolute vorticity absv s**-1
+850 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+850 isobaricInhPa Icing severity ICSEV Numeric
+900 isobaricInhPa Geopotential Height gh gpm
+900 isobaricInhPa Temperature t K
+900 isobaricInhPa Relative humidity r %
+900 isobaricInhPa Vertical velocity w Pa s**-1
+900 isobaricInhPa U component of wind u m s**-1
+900 isobaricInhPa V component of wind v m s**-1
+900 isobaricInhPa Absolute vorticity absv s**-1
+900 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+900 isobaricInhPa Icing severity ICSEV Numeric
+925 isobaricInhPa Geopotential Height gh gpm
+925 isobaricInhPa Temperature t K
+925 isobaricInhPa Relative humidity r %
+925 isobaricInhPa Vertical velocity w Pa s**-1
+925 isobaricInhPa U component of wind u m s**-1
+925 isobaricInhPa V component of wind v m s**-1
+925 isobaricInhPa Absolute vorticity absv s**-1
+925 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+950 isobaricInhPa Geopotential Height gh gpm
+950 isobaricInhPa Temperature t K
+950 isobaricInhPa Relative humidity r %
+950 isobaricInhPa Vertical velocity w Pa s**-1
+950 isobaricInhPa U component of wind u m s**-1
+950 isobaricInhPa V component of wind v m s**-1
+950 isobaricInhPa Absolute vorticity absv s**-1
+950 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+950 isobaricInhPa Icing severity ICSEV Numeric
+0 surface Haines Index hindex Numeric
+975 isobaricInhPa Geopotential Height gh gpm
+975 isobaricInhPa Temperature t K
+975 isobaricInhPa Relative humidity r %
+975 isobaricInhPa Vertical velocity w Pa s**-1
+975 isobaricInhPa U component of wind u m s**-1
+975 isobaricInhPa V component of wind v m s**-1
+975 isobaricInhPa Absolute vorticity absv s**-1
+975 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+1000 isobaricInhPa Temperature t K
+1000 isobaricInhPa Relative humidity r %
+1000 isobaricInhPa Vertical velocity w Pa s**-1
+1000 isobaricInhPa U component of wind u m s**-1
+1000 isobaricInhPa V component of wind v m s**-1
+1000 isobaricInhPa Absolute vorticity absv s**-1
+1000 isobaricInhPa Cloud mixing ratio clwmr kg kg**-1
+1000 isobaricInhPa Icing severity ICSEV Numeric
+0 meanSea MSLP (Eta model reduction) mslet Pa
+1000 isobaricInhPa Geopotential Height gh gpm
+0 surface Surface pressure sp Pa
+0 surface Orography orog m
+0 surface Temperature t K
+0 depthBelowLandLayer Soil Temperature st K
+0 depthBelowLandLayer Volumetric soil moisture content soilw Proportion
+0 depthBelowLandLayer Soil Temperature st K
+0 depthBelowLandLayer Volumetric soil moisture content soilw Proportion
+0 depthBelowLandLayer Soil Temperature st K
+0 depthBelowLandLayer Volumetric soil moisture content soilw Proportion
+1 depthBelowLandLayer Soil Temperature st K
+1 depthBelowLandLayer Volumetric soil moisture content soilw Proportion
+0 surface Water equivalent of accumulated snow depth sdwe kg m**-2
+0 surface Snow depth sde m
+0 surface Potential evaporation rate pevpr W m**-2
+2 heightAboveGround 2 metre temperature 2t K
+2 heightAboveGround Specific humidity q kg kg**-1
+2 heightAboveGround 2 metre dewpoint temperature 2d K
+2 heightAboveGround 2 metre relative humidity 2r %
+2 heightAboveGround Apparent temperature aptmp K
+2 heightAboveGround Maximum temperature tmax K
+2 heightAboveGround Minimum temperature tmin K
+10 heightAboveGround 10 metre U wind component 10u m s**-1
+10 heightAboveGround 10 metre V wind component 10v m s**-1
+0 surface Percent frozen precipitation cpofp %
+0 surface Convective precipitation rate cprat kg m**-2 s**-1
+0 surface Precipitation rate prate kg m**-2 s**-1
+0 surface Total Precipitation tp kg m**-2
+0 surface Convective precipitation (water) acpcp kg m**-2
+0 surface Water runoff watr kg m**-2
+0 surface Categorical snow csnow (Code table 4.222)
+0 surface Categorical ice pellets cicep (Code table 4.222)
+0 surface Categorical freezing rain cfrzr (Code table 4.222)
+0 surface Categorical rain crain (Code table 4.222)
+0 surface Latent heat net flux lhtfl W m**-2
+0 surface Sensible heat net flux shtfl W m**-2
+0 surface Ground heat flux gflux W m**-2
+0 surface Momentum flux, u component uflx N m**-2
+0 surface Momentum flux, v component vflx N m**-2
+0 surface Zonal flux of gravity wave stress u-gwd N m**-2
+0 surface Meridional flux of gravity wave stress v-gwd N m**-2
+0 surface Wilting Point wilt Fraction
+0 surface Field Capacity fldcp Fraction
+0 surface Sunshine Duration SUNSD s
+0 surface Surface lifted index lftx K
+0 surface Convective available potential energy cape J kg**-1
+0 surface Convective inhibition cin J kg**-1
+0 unknown Precipitable water pwat kg m**-2
+0 unknown Cloud water cwat kg m**-2
+0 unknown Relative humidity r %
+0 unknown Total ozone tozne DU
+0 unknown Total Cloud Cover tcc %
+0 unknown Total Cloud Cover tcc %
+0 unknown Total Cloud Cover tcc %
+0 atmosphere Total Cloud Cover tcc %
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Pressure pres Pa
+0 unknown Temperature t K
+0 unknown Temperature t K
+0 unknown Temperature t K
+0 unknown Total Cloud Cover tcc %
+0 unknown Total Cloud Cover tcc %
+0 unknown Cloud work function cwork J kg**-1
+0 surface Downward short-wave radiation flux dswrf W m**-2
+0 surface Downward long-wave radiation flux dlwrf W m**-2
+0 surface Upward short-wave radiation flux uswrf W m**-2
+0 surface Upward long-wave radiation flux ulwrf W m**-2
+0 nominalTop Upward short-wave radiation flux uswrf W m**-2
+0 nominalTop Upward long-wave radiation flux ulwrf W m**-2
+3000 heightAboveGroundLayer Storm relative helicity hlcy J kg**-1
+6000 heightAboveGroundLayer U-component storm motion ustm m s**-1
+6000 heightAboveGroundLayer V-component storm motion vstm m s**-1
+0 tropopause Pressure pres Pa
+0 tropopause ICAO Standard Atmosphere reference height icaht m
+0 tropopause Geopotential Height gh gpm
+0 tropopause Temperature t K
+0 tropopause U component of wind u m s**-1
+0 tropopause V component of wind v m s**-1
+0 tropopause Vertical speed shear vwsh s**-1
+0 maxWind Pressure pres Pa
+0 maxWind ICAO Standard Atmosphere reference height icaht m
+0 maxWind Geopotential Height gh gpm
+0 maxWind U component of wind u m s**-1
+0 maxWind V component of wind v m s**-1
+0 maxWind Temperature t K
+80 heightAboveGround Temperature t K
+80 heightAboveGround Specific humidity q kg kg**-1
+80 heightAboveGround Pressure pres Pa
+80 heightAboveGround U component of wind u m s**-1
+80 heightAboveGround V component of wind v m s**-1
+100 heightAboveGround Temperature t K
+100 heightAboveGround U component of wind u m s**-1
+100 heightAboveGround V component of wind v m s**-1
+1829 heightAboveSea Temperature t K
+1829 heightAboveSea U component of wind u m s**-1
+1829 heightAboveSea V component of wind v m s**-1
+2743 heightAboveSea Temperature t K
+2743 heightAboveSea U component of wind u m s**-1
+2743 heightAboveSea V component of wind v m s**-1
+3658 heightAboveSea Temperature t K
+3658 heightAboveSea U component of wind u m s**-1
+3658 heightAboveSea V component of wind v m s**-1
+0 isothermZero Geopotential Height gh gpm
+0 isothermZero Relative humidity r %
+0 unknown Geopotential Height gh gpm
+0 unknown Relative humidity r %
+3000 pressureFromGroundLayer Temperature t K
+3000 pressureFromGroundLayer Relative humidity r %
+3000 pressureFromGroundLayer Specific humidity q kg kg**-1
+3000 pressureFromGroundLayer U component of wind u m s**-1
+3000 pressureFromGroundLayer V component of wind v m s**-1
+0 surface Best (4-layer) lifted index 4lftx K
+18000 pressureFromGroundLayer Convective available potential energy cape J kg**-1
+18000 pressureFromGroundLayer Convective inhibition cin J kg**-1
+0 surface Planetary boundary layer height hpbl m
+0 sigmaLayer Relative humidity r %
+0 sigmaLayer Relative humidity r %
+1 sigmaLayer Relative humidity r %
+0 sigmaLayer Relative humidity r %
+1 sigma Temperature t K
+1 sigma Potential temperature pt K
+1 sigma Relative humidity r %
+1 sigma U component of wind u m s**-1
+1 sigma V component of wind v m s**-1
+1 sigma Vertical velocity w Pa s**-1
+25500 pressureFromGroundLayer Convective available potential energy cape J kg**-1
+25500 pressureFromGroundLayer Convective inhibition cin J kg**-1
+25500 pressureFromGroundLayer Pressure of level from which parcel was lifted plpl Pa
+0 surface Land-sea mask lsm (0 - 1)
+0 surface Sea-ice cover ci (0 - 1)
+0 surface Albedo al %
+2 potentialVorticity U component of wind u m s**-1
+2 potentialVorticity V component of wind v m s**-1
+2 potentialVorticity Temperature t K
+2 potentialVorticity Geopotential Height gh gpm
+2 potentialVorticity Pressure pres Pa
+2 potentialVorticity Vertical speed shear vwsh s**-1
+2147486 potentialVorticity U component of wind u m s**-1
+2147486 potentialVorticity V component of wind v m s**-1
+2147486 potentialVorticity Temperature t K
+2147486 potentialVorticity Geopotential Height gh gpm
+2147486 potentialVorticity Pressure pres Pa
+2147486 potentialVorticity Vertical speed shear vwsh s**-1
+0 meanSea Pressure reduced to MSL prmsl Pa
+500 isobaricInhPa 5-wave geopotential height 5wavh gpm
+0 surface Land-sea coverage (nearest neighbor) [land=1,sea=0] landn ~
+> /home/su/Essential/cooker/PlantsAndWeather/scripts/meteo/py/scangrb.py(28)<module>()
+-> pp = pprint.PrettyPrinter(indent=4, compact=True)
+(Pdb) c
+('cwork', 'Cloud work function', 'J kg**-1')
+('mslet', 'MSLP (Eta model reduction)', 'Pa')
+('cicep', 'Categorical ice pellets', '(Code table 4.222)')
+('r', 'Relative humidity', '%')
+('clwmr', 'Cloud mixing ratio', 'kg kg**-1')
+('prmsl', 'Pressure reduced to MSL', 'Pa')
+('gflux', 'Ground heat flux', 'W m**-2')
+('4lftx', 'Best (4-layer) lifted index', 'K')
+('10v', '10 metre V wind component', 'm s**-1')
+('pres', 'Pressure', 'Pa')
+('al', 'Albedo', '%')
+('pevpr', 'Potential evaporation rate', 'W m**-2')
+('watr', 'Water runoff', 'kg m**-2')
+('tmax', 'Maximum temperature', 'K')
+('plpl', 'Pressure of level from which parcel was lifted', 'Pa')
+('landn', 'Land-sea coverage (nearest neighbor) [land=1,sea=0]', '~')
+('w', 'Vertical velocity', 'Pa s**-1')
+('orog', 'Orography', 'm')
+('tozne', 'Total ozone', 'DU')
+('o3mr', 'Ozone mixing ratio', 'kg kg**-1')
+('aptmp', 'Apparent temperature', 'K')
+('ulwrf', 'Upward long-wave radiation flux', 'W m**-2')
+('vwsh', 'Vertical speed shear', 's**-1')
+('u', 'U component of wind', 'm s**-1')
+('tp', 'Total Precipitation', 'kg m**-2')
+('v', 'V component of wind', 'm s**-1')
+('v-gwd', 'Meridional flux of gravity wave stress', 'N m**-2')
+('VRATE', 'Ventilation Rate', 'm**2 s**-1')
+('lsm', 'Land-sea mask', '(0 - 1)')
+('hlcy', 'Storm relative helicity', 'J kg**-1')
+('cin', 'Convective inhibition', 'J kg**-1')
+('absv', 'Absolute vorticity', 's**-1')
+('prate', 'Precipitation rate', 'kg m**-2 s**-1')
+('hpbl', 'Planetary boundary layer height', 'm')
+('vstm', 'V-component storm motion', 'm s**-1')
+('sdwe', 'Water equivalent of accumulated snow depth', 'kg m**-2')
+('csnow', 'Categorical snow', '(Code table 4.222)')
+('hindex', 'Haines Index', 'Numeric')
+('cwat', 'Cloud water', 'kg m**-2')
+('cape', 'Convective available potential energy', 'J kg**-1')
+('icaht', 'ICAO Standard Atmosphere reference height', 'm')
+('vis', 'Visibility', 'm')
+('uswrf', 'Upward short-wave radiation flux', 'W m**-2')
+('u-gwd', 'Zonal flux of gravity wave stress', 'N m**-2')
+('ICSEV', 'Icing severity', 'Numeric')
+('gust', 'Wind speed (gust)', 'm s**-1')
+('tmin', 'Minimum temperature', 'K')
+('vflx', 'Momentum flux, v component', 'N m**-2')
+('dswrf', 'Downward short-wave radiation flux', 'W m**-2')
+('ci', 'Sea-ice cover', '(0 - 1)')
+('fldcp', 'Field Capacity', 'Fraction')
+('soilw', 'Volumetric soil moisture content', 'Proportion')
+('tcc', 'Total Cloud Cover', '%')
+('ustm', 'U-component storm motion', 'm s**-1')
+('sde', 'Snow depth', 'm')
+('wilt', 'Wilting Point', 'Fraction')
+('q', 'Specific humidity', 'kg kg**-1')
+('uflx', 'Momentum flux, u component', 'N m**-2')
+('pt', 'Potential temperature', 'K')
+('cpofp', 'Percent frozen precipitation', '%')
+('SUNSD', 'Sunshine Duration', 's')
+('2r', '2 metre relative humidity', '%')
+('pwat', 'Precipitable water', 'kg m**-2')
+('cfrzr', 'Categorical freezing rain', '(Code table 4.222)')
+('lftx', 'Surface lifted index', 'K')
+('2d', '2 metre dewpoint temperature', 'K')
+('sp', 'Surface pressure', 'Pa')
+('cprat', 'Convective precipitation rate', 'kg m**-2 s**-1')
+('acpcp', 'Convective precipitation (water)', 'kg m**-2')
+('shtfl', 'Sensible heat net flux', 'W m**-2')
+('dlwrf', 'Downward long-wave radiation flux', 'W m**-2')
+('5wavh', '5-wave geopotential height', 'gpm')
+('2t', '2 metre temperature', 'K')
+('gh', 'Geopotential Height', 'gpm')
+('10u', '10 metre U wind component', 'm s**-1')
+('crain', 'Categorical rain', '(Code table 4.222)')
+('t', 'Temperature', 'K')
+('lhtfl', 'Latent heat net flux', 'W m**-2')
+('st', 'Soil Temperature', 'K')
+
+#pressure levels
+[   ('unknown', 0), ('sigmaLayer', 1), ('sigmaLayer', 0), ('sigma', 1),
+    ('pressureFromGroundLayer', 3000), ('isothermZero', 0),
+    ('isobaricInhPa', 1000), ('isobaricInhPa', 975), ('isobaricInhPa', 950),
+    ('isobaricInhPa', 925), ('isobaricInhPa', 900), ('isobaricInhPa', 850),
+    ('isobaricInhPa', 800), ('isobaricInhPa', 750), ('isobaricInhPa', 700),
+    ('isobaricInhPa', 650), ('isobaricInhPa', 600), ('isobaricInhPa', 550),
+    ('isobaricInhPa', 500), ('isobaricInhPa', 450), ('isobaricInhPa', 400),
+    ('isobaricInhPa', 350), ('isobaricInhPa', 300), ('isobaricInhPa', 250),
+    ('isobaricInhPa', 200), ('isobaricInhPa', 150), ('isobaricInhPa', 100),
+    ('isobaricInhPa', 70), ('isobaricInhPa', 50), ('isobaricInhPa', 30),
+    ('isobaricInhPa', 20), ('isobaricInhPa', 10), ('isobaricInhPa', 7),
+    ('isobaricInhPa', 5), ('isobaricInhPa', 3), ('isobaricInhPa', 2),
+    ('isobaricInhPa', 1)]
+
+########################################
+Grib Keys:
+['globalDomain'
+'GRIBEditionNumber'
+'tablesVersionLatest'
+'grib2divider'
+'is_efas'
+'angularPrecision'
+'missingValue'
+'ieeeFloats'
+'isHindcast'
+'section0Length'
+'identifier'
+'discipline'
+'editionNumber'
+'totalLength'
+'sectionNumber'
+'section1Length'
+'numberOfSection'
+'centre'
+'centreDescription'
+'subCentre'
+'tablesVersion'
+'masterDir'
+'localTablesVersion'
+'significanceOfReferenceTime'
+'year'
+'month'
+'day'
+'hour'
+'minute'
+'second'
+'dataDate'
+'julianDay'
+'dataTime'
+'productionStatusOfProcessedData'
+'typeOfProcessedData'
+'md5Section1'
+'selectStepTemplateInterval'
+'selectStepTemplateInstant'
+'stepType'
+'setCalendarId'
+'deleteCalendarId'
+'is_uerra'
+'sectionNumber'
+'grib2LocalSectionPresent'
+'deleteLocalDefinition'
+'sectionNumber'
+'gridDescriptionSectionPresent'
+'section3Length'
+'numberOfSection'
+'sourceOfGridDefinition'
+'numberOfDataPoints'
+'numberOfOctectsForNumberOfPoints'
+'interpretationOfNumberOfPoints'
+'PLPresent'
+'gridDefinitionTemplateNumber'
+'gridDefinitionDescription'
+'shapeOfTheEarth'
+'scaleFactorOfRadiusOfSphericalEarth'
+'scaledValueOfRadiusOfSphericalEarth'
+'scaleFactorOfEarthMajorAxis'
+'scaledValueOfEarthMajorAxis'
+'scaleFactorOfEarthMinorAxis'
+'scaledValueOfEarthMinorAxis'
+'radius'
+'Ni'
+'Nj'
+'basicAngleOfTheInitialProductionDomain'
+'mBasicAngle'
+'angleMultiplier'
+'mAngleMultiplier'
+'subdivisionsOfBasicAngle'
+'angleDivisor'
+'latitudeOfFirstGridPoint'
+'longitudeOfFirstGridPoint'
+'resolutionAndComponentFlags'
+'resolutionAndComponentFlags1'
+'resolutionAndComponentFlags2'
+'iDirectionIncrementGiven'
+'jDirectionIncrementGiven'
+'uvRelativeToGrid'
+'resolutionAndComponentFlags6'
+'resolutionAndComponentFlags7'
+'resolutionAndComponentFlags8'
+'ijDirectionIncrementGiven'
+'latitudeOfLastGridPoint'
+'longitudeOfLastGridPoint'
+'iDirectionIncrement'
+'jDirectionIncrement'
+'scanningMode'
+'iScansNegatively'
+'jScansPositively'
+'jPointsAreConsecutive'
+'alternativeRowScanning'
+'iScansPositively'
+'scanningMode5'
+'scanningMode6'
+'scanningMode7'
+'scanningMode8'
+'g2grid'
+'latitudeOfFirstGridPointInDegrees'
+'longitudeOfFirstGridPointInDegrees'
+'latitudeOfLastGridPointInDegrees'
+'longitudeOfLastGridPointInDegrees'
+'iDirectionIncrementInDegrees'
+'jDirectionIncrementInDegrees'
+'latLonValues'
+'latitudes'
+'longitudes'
+'distinctLatitudes'
+'distinctLongitudes'
+'gridType'
+'md5Section3'
+'sectionNumber'
+'section4Length'
+'numberOfSection'
+'NV'
+'neitherPresent'
+'productDefinitionTemplateNumber'
+'genVertHeightCoords'
+'parameterCategory'
+'parameterNumber'
+'parameterUnits'
+'parameterName'
+'typeOfGeneratingProcess'
+'backgroundProcess'
+'generatingProcessIdentifier'
+'hoursAfterDataCutoff'
+'minutesAfterDataCutoff'
+'indicatorOfUnitOfTimeRange'
+'stepUnits'
+'forecastTime'
+'startStep'
+'endStep'
+'stepRange'
+'stepTypeInternal'
+'validityDate'
+'validityTime'
+'typeOfFirstFixedSurface'
+'unitsOfFirstFixedSurface'
+'nameOfFirstFixedSurface'
+'scaleFactorOfFirstFixedSurface'
+'scaledValueOfFirstFixedSurface'
+'typeOfSecondFixedSurface'
+'unitsOfSecondFixedSurface'
+'nameOfSecondFixedSurface'
+'scaleFactorOfSecondFixedSurface'
+'scaledValueOfSecondFixedSurface'
+'pressureUnits'
+'typeOfLevel'
+'level'
+'bottomLevel'
+'topLevel'
+'tempPressureUnits'
+'paramIdECMF'
+'paramId'
+'shortNameECMF'
+'shortName'
+'unitsECMF'
+'units'
+'nameECMF'
+'name'
+'cfNameECMF'
+'cfName'
+'cfVarNameECMF'
+'cfVarName'
+'modelName'
+'ifsParam'
+'PVPresent'
+'deletePV'
+'md5Section4'
+'lengthOfHeaders'
+'md5Headers'
+'sectionNumber'
+'section5Length'
+'numberOfSection'
+'numberOfValues'
+'dataRepresentationTemplateNumber'
+'packingType'
+'referenceValue'
+'referenceValueError'
+'binaryScaleFactor'
+'decimalScaleFactor'
+'optimizeScaleFactor'
+'bitsPerValue'
+'typeOfOriginalFieldValues'
+'md5Section5'
+'sectionNumber'
+'section6Length'
+'numberOfSection'
+'bitMapIndicator'
+'bitmapPresent'
+'md5Section6'
+'sectionNumber'
+'section7Length'
+'numberOfSection'
+'codedValues'
+'values'
+'packingError'
+'unpackedError'
+'maximum'
+'minimum'
+'average'
+'numberOfMissing'
+'standardDeviation'
+'skewness'
+'kurtosis'
+'isConstant'
+'changeDecimalPrecision'
+'decimalPrecision'
+'setBitsPerValue'
+'getNumberOfValues'
+'scaleValuesBy'
+'offsetValuesBy'
+'productType'
+'md5Section7'
+'section8Length'
+'analDate'
+'validDate']
+
