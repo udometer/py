@@ -11,8 +11,11 @@ from scipy.interpolate import RectBivariateSpline
 from scipy.ndimage.filters import maximum_filter, minimum_filter, gaussian_filter
 from matplotlib.colors import LinearSegmentedColormap
 import numpy as np
+import matplotlib.patheffects as PathEffects
 import pdb
 import sys, os, math
+
+from datetime import timezone, timedelta
 
 print (sys.argv)
 
@@ -50,7 +53,9 @@ class FiPA():
         self.atime = prmsl.analDate.strftime("%Y-%m-%d %H%Mz")
         self.fh = prmsl.forecastTime
 
-        self.suptitle = "(test FiPA small scale. 2° or 10° expanse) GFS for " + str(latitude) + ", " + str(longitude) + ". " +  self.atime +" analysis. Fcst hr " + str(self.fh)
+        self.vtime = (prmsl.analDate + timedelta(hours=12)).replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%H%M IST")
+
+        self.suptitle = "(test FiPA) GFS for " + str(latitude) + ", " + str(longitude) + ". " +  self.atime +" analysis. Fcst hr " + str(self.fh) + " (" + self.vtime + ")"
 
     def newSubPlot(self):
         self.ax = self.fig.add_subplot(self.subrows, self.subcols, self.subidx, projection=ccrs.PlateCarree())
@@ -75,10 +80,9 @@ class FiPA():
         lons = list(np.linspace(first_longitude, last_longitude, Ni))
         lats = list(np.linspace(first_latitude, last_latitude, Nj))
 
-
         e = self.context_degrees
         def index(l, v):
-            idx = -1
+            idx = 0
             i = 0
             while i < len(l):
                 if (l[i] <= v):
@@ -89,8 +93,12 @@ class FiPA():
 
             return idx
 
-        step_lat = step_lon = e
-        (minlon, maxlon, minlat, maxlat) = (longitude-step_lon, longitude+step_lon, latitude-step_lat, latitude+step_lat)
+
+        if (e == -1):
+            (minlon, maxlon, minlat, maxlat) = (first_longitude, last_longitude, first_latitude, last_latitude)
+        else: 
+            step_lat = step_lon = e
+            (minlon, maxlon, minlat, maxlat) = (longitude-step_lon, longitude+step_lon, latitude-step_lat, latitude+step_lat)
 
         def get_extant_indices():
             x1 = index(lons, minlon)
@@ -117,8 +125,6 @@ class FiPA():
 
             (x1, x2, y1, y2) = get_extant_indices()
 
-            #method recommended by matplotlib for 
-            #regular sized rectangular grids.
             tlons = np.array(lons[x1:x2+1])
             tlats = np.array(lats[y1:y2+1]),
             tvals = values[y1:y2+1, x1:x2+1]
@@ -129,6 +135,11 @@ class FiPA():
             lons = np.linspace(longitude, longitude, 0)
             lats = np.linspace(latitude, latitude, 0)
             x1=x2=y1=y2=0
+
+        if 0:
+            x1 = y1 = 0
+            x2 = len(lons)-1
+            y2 = len(lats)-1
 
         grid_lon, grid_lat = np.meshgrid(lons[x1:x2+1], lats[y1:y2+1]) #regularly spaced 2D grid
 
@@ -193,7 +204,7 @@ class FiPA():
         def get_1d_field(sn):
             f = grbs.select(shortName=sn, level=known_isobaric_levels_to_100, typeOfLevel='isobaricInhPa')
             grid_lon, grid_lat, fvalues = self.trim_3d_data_to_extent(f)
-            f = fvalues.reshape(fvalues.size)
+            f = fvalues.reshape(fvalues.shape[0])
             return grid_lon, grid_lat, f
 
         grid_lon, grid_lat, RH = get_1d_field('r')
@@ -218,7 +229,7 @@ class FiPA():
 
         #skewt.ptop = 150
         #skewt.pbottom = 1010
-        self.suptitle = "(test FiPA) GFS " +  self.atime +" analysis. Fcst hr " + str(self.fh)
+        self.suptitle = "(test)GFS " +  self.atime +" analysis. Fcst hr " + str(self.fh) + " (" + self.vtime + ")"
         skewt.plot(str(latitude) + ", " + str(longitude), z, th, p * 100, qv, u, v, grib + '_skewt_' + str(latitude) + "_" + str(longitude) + '.png', title=self.suptitle);
 
     def plot_pv(self, tempk, cint, context_degrees):
@@ -257,7 +268,7 @@ class FiPA():
 
         lon1, lon2, lat1, lat2 = (grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
 
-        lat_in  = grid_lat[0:grid_lat.size-1,0:1].reshape(grid_lat[0].size)
+        lat_in  = grid_lat[0:grid_lat.size-1,0:1].reshape(grid_lat.shape[0])
         lon_in  = grid_lon[0][:]
         lev = list(known_isobaric_levels)
         lev = np.array(lev)
@@ -394,6 +405,7 @@ class FiPA():
 
         rh_all = rh_all/len(gribs_at_lev)
 
+        #pdb.set_trace()
         grid_lon, grid_lat, rh_all = self.trim_array_to_extent(grb, rh_all)
 
         ax = self.newSubPlot()
@@ -419,6 +431,7 @@ class FiPA():
         grid_lon, grid_lat, mslpvalues = self.trim_array_to_extent(mslp, mslp.values)
         nlines = cint * 2 #int((mslp.max - mslp.min)/cint)
         c = ax.contour(grid_lon, grid_lat, mslpvalues, nlines, colors='k', linewidths=0.5, alpha=0.5)
+        plt.clabel(c, fmt="%d")
 
         ######################
         """
@@ -457,12 +470,14 @@ class FiPA():
             if x < mxmax and x > mxmin and y < mymax and y > mymin:
                 dist = [np.sqrt((x-x0)**2+(y-y0)**2) for x0,y0 in xyplotted]
                 if not dist or min(dist) > dmin:
-                    plt.text(x,y,'L',fontsize=14,fontweight='bold',
-                            ha='center',va='center',color='b')
-                    plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
-                            ha='center',va='top',color='b',
+                    text = plt.text(x,y,'L',fontsize=11,fontweight='bold',
+                            ha='center',va='center',color='w')
+                    text.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='k')])
+                    text = plt.text(x,y-yoffset,repr(int(p/100)),fontsize=9, fontweight='bold',
+                            ha='center',va='top',color='w',
                             #bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5))
                             )
+                    text.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='k')])
                     xyplotted.append((x,y))
         # plot highs as red H's, with max pressure value underneath.
         xyplotted = []
@@ -470,21 +485,22 @@ class FiPA():
             if x < mxmax and x > mxmin and y < mymax and y > mymin:
                 dist = [np.sqrt((x-x0)**2+(y-y0)**2) for x0,y0 in xyplotted]
                 if not dist or min(dist) > dmin:
-                    plt.text(x,y,'H',fontsize=14,fontweight='bold',
-                            ha='center',va='center',color='r')
-                    plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
-                            ha='center',va='top',color='r',
+                    text = plt.text(x,y,'H',fontsize=11,fontweight='bold',
+                            ha='center',va='center',color='w')
+                    text.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='k')])
+                    text = plt.text(x,y-yoffset,repr(int(p/100)),fontsize=9, fontweight='bold',
+                            ha='center',va='top',color='w',
                             #bbox = dict(boxstyle="square", ec='None',fc=(1,1,1,0.5))
                             )
+                    text.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='k')])
                     xyplotted.append((x,y))
         ######################
 
-        plt.clabel(c, fmt="%d")
 
 
         self.draw_boundaries()
 
-        title = "MSLP (Pa) " + str(levA) + "-" + str(levB) + " hPa RH(%, shaded)"
+        title = "MSLP (Pa) " + str(levA) + " - " + str(levB) + " hPa RH(%, shaded)"
         ax.set_title(title)
 
     def plot_vertical_shear(self, levA, levB, cint, context_degrees):
@@ -531,7 +547,7 @@ class FiPA():
         ax.streamplot(grid_lon, grid_lat, du, dv, density=1, transform=ccrs.PlateCarree(), linewidth=0.5, color=(0.0, 0.0, 0.0, 1))
         self.draw_boundaries()
 
-        title = str(levA) + "hPa-" + str(levB) + "hpa Wind Shear (kt) (shaded & streamlined)"
+        title = str(levA) + " hPa - " + str(levB) + " hPa Wind Shear (kt) (shaded & streamlined)"
         ax.set_title(title)
 
 
@@ -581,7 +597,7 @@ class FiPA():
 ###############
         self.draw_boundaries()
 
-        title = str(gh.level) + " hPa, gph(" + gh.units + " ), abs vort. (10^5 " + absv.units + ", shaded), wind (kt)"
+        title = str(gh.level) + " hPa, gph (" + gh.units + "), abs vort. (10^5 " + absv.units + ", shaded), wind (kt)"
         ax.set_title(title)
 ###############
         #plt.savefig(grib + str(gh.dataDate) + "_" + str(gh.dataTime) + "_" + str(gh.forecastTime) +  "_" + str(gh.shortName) + "_" + str(gh.level) + '.png') # Set the output file name
@@ -590,16 +606,17 @@ class FiPA():
 if __name__ == '__main__':
     xsize = 19.2
     ysize = 10.8
+    ctxd = -1
     #"""
     fipa = FiPA(grib, 1, 2, 3, xsize, ysize)
     fipa.fig = plt.figure(figsize=(xsize, ysize), clear=False, tight_layout=False)
     fipa.fig.suptitle(fipa.suptitle)
     fipa.plot_gph_vort_wind(850, 10, 1)
     fipa.plot_gph_vort_wind(500, 10, 1)
-    fipa.plot_combined_rh_mslp(700, 400, 10, 5)
-    fipa.plot_pv(355, 10, 5)
-    fipa.plot_pv(330, 10, 5)
-    fipa.plot_vertical_shear(200, 800, 10, 5)
+    fipa.plot_combined_rh_mslp(850, 500, 10, ctxd)
+    fipa.plot_pv(355, 10, ctxd)
+    fipa.plot_pv(330, 10, ctxd)
+    fipa.plot_vertical_shear(200, 800, 10, ctxd)
     plt.savefig(grib + '_FiPA_' + str(latitude) + "_" + str(longitude) + '.png')
     plt.close()
     #"""
