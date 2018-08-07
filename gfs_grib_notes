@@ -417,7 +417,6 @@ pressure levels [1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 50
 0 meanSea Pressure reduced to MSL prmsl Pa
 500 isobaricInhPa 5-wave geopotential height 5wavh gpm
 0 surface Land-sea coverage (nearest neighbor) [land=1,sea=0] landn ~
-> /home/su/Essential/cooker/PlantsAndWeather/scripts/meteo/py/scangrb.py(28)<module>()
 -> pp = pprint.PrettyPrinter(indent=4, compact=True)
 (Pdb) c
 ('cwork', 'Cloud work function', 'J kg**-1')
