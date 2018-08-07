@@ -20,11 +20,15 @@ if (len(sys.argv) < 2):
     print ("Usage: ", sys.argv[0], " <grib file>")
     sys.exit(1)
 
-latitude = 11.28
-longitude = 76.95
 
 knots_per_m = 1.94384
 grib = sys.argv[1]
+latitude = 11.28
+longitude = 76.95
+if (len(sys.argv) == 4):
+    longitude = float(sys.argv[2])
+    latitude = float(sys.argv[3])
+
 myloc = os.path.dirname(sys.argv[0])
 
 known_isobaric_levels = (1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10, 7, 5, 3, 2, 1)
@@ -214,8 +218,8 @@ class FiPA():
 
         #skewt.ptop = 150
         #skewt.pbottom = 1010
-        self.suptitle = "(test FiPA) GFS" +  self.atime +" analysis. Fcst hr " + str(self.fh)
-        skewt.plot(str(latitude) + ", " + str(longitude), z, th, p * 100, qv, u, v, grib + '_skewt.png', title=self.suptitle);
+        self.suptitle = "(test FiPA) GFS " +  self.atime +" analysis. Fcst hr " + str(self.fh)
+        skewt.plot(str(latitude) + ", " + str(longitude), z, th, p * 100, qv, u, v, grib + '_skewt_' + str(latitude) + "_" + str(longitude) + '.png', title=self.suptitle);
 
     def plot_pv(self, tempk, cint, context_degrees):
         self.context_degrees = context_degrees
@@ -596,7 +600,7 @@ if __name__ == '__main__':
     fipa.plot_pv(355, 10, 5)
     fipa.plot_pv(330, 10, 5)
     fipa.plot_vertical_shear(200, 800, 10, 5)
-    plt.savefig(grib + "_FiPA"+ '.png') # Set the output file name
+    plt.savefig(grib + '_FiPA_' + str(latitude) + "_" + str(longitude) + '.png')
     plt.close()
     #"""
     fipa2 = FiPA(grib, 1, 1, 1, xsize, ysize)
