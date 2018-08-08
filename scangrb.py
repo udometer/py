@@ -22,9 +22,23 @@ else:
 grbs = pygrib.open(grib)
 
 grb = grbs.select()
-for r in grbs.select(): print (r.level, r.typeOfLevel, r.name, r.shortName, r.units)
+x = []
+all_items = {}
 
-pdb.set_trace()
+for p in grb: 
+    key = (p.level, p.typeOfLevel, p.shortName)
+    if (all_items.get(key)):
+        pdb.set_trace()
+    all_items[key] = p
+
+x = sorted(x)
+
+print (len(grb), len (x))
+
+for xx in x:
+    print(xx)
+
+sys.exit(0)
 pp = pprint.PrettyPrinter(indent=4, compact=True)
 
 sn = set()

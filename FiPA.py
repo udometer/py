@@ -53,7 +53,7 @@ class FiPA():
         self.atime = prmsl.analDate.strftime("%Y-%m-%d %H%Mz")
         self.fh = prmsl.forecastTime
 
-        self.vtime = (prmsl.analDate + timedelta(hours=12)).replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%H%M IST")
+        self.vtime = (prmsl.analDate + timedelta(hours=5 + self.fh, minutes=30)).strftime("%H%M IST")
 
         self.suptitle = "(test FiPA) GFS for " + str(latitude) + ", " + str(longitude) + ". " +  self.atime +" analysis. Fcst hr " + str(self.fh) + " (" + self.vtime + ")"
 
@@ -325,9 +325,9 @@ class FiPA():
         ny=iy2-iy1+1
         nz=lev.size
         pvtempk=np.zeros((ny,nx))  # initialize as undef
-        #utempk=np.zeros((ny,nx))  # initialize as undef
-        #vtempk=np.zeros((ny,nx))  # initialize as undef
-        #ptempk=np.zeros((ny,nx))  # initialize as undef
+        utempk=np.zeros((ny,nx))  # initialize as undef
+        vtempk=np.zeros((ny,nx))  # initialize as undef
+        ptempk=np.zeros((ny,nx))  # initialize as undef
         for ix in range(0,nx):
             for iy in range(0,ny):
                 for iz in range(nz-2,0,-1):#iz - increasing order of pressure
@@ -339,18 +339,19 @@ class FiPA():
                             ni = (iz-1, iy, ix)
                             ti2 = (iy, ix)
                             
+                            dtheta = theta[ti] - theta[ni]
+                            dtemp = tempk - theta[ni]
+
                             pvtempk[ti2]=(
-                            ((tempk-theta[ni])*pv[ti]+
-                            (theta[ti]-tempk)*pv[ni])/
-                            (theta[ti]-theta[ni])
+                            ((dtemp)*pv[ti]+
+                            (theta[ti]-tempk)*pv[ni])/dtheta
                             )
 
-                            """
-                            #an average is probably not the most accurate calculation
-                            utempk[ti2] = (u[ni] + u[ti])/2 * knots_per_m
-                            vtempk[ti2] = (v[ni] + v[ti])/2 * knots_per_m
-                            ptempk[ti2] = (lev[iz] + lev[iz-1])/2
-                            """
+                            udiff = u[ti] - u[ni]
+                            vdiff = v[ti] - v[ni]
+                            utempk[ti2] = (u[ti] + (udiff/dtheta) * dtemp) * knots_per_m
+                            vtempk[ti2] = (v[ti] + (vdiff/dtheta) * dtemp) * knots_per_m
+                            ptempk[ti2] = lev[iz] + (((lev[iz] - lev[iz-1])/dtheta) * dtemp)
 
         ax = self.newSubPlot()
         self.setup_grid(grid_lon.min(), grid_lon.max(), grid_lat.min(), grid_lat.max())
@@ -359,11 +360,13 @@ class FiPA():
         c = ax.contourf(lon, lat, pvtempk/1e-6, clevs, cmap=shade_colors, alpha=1, extend="both")
         plt.colorbar(c, ticks=clevs)
 
-        """
-        ax.barbs(lon, lat, utempk, vtempk, transform=ccrs.PlateCarree(), linewidth=0.5, regrid_shape=10, length=5)
-        nlines = cint * 2
-        c = ax.contour(lon, lat, ptempk, nlines, colors='k', alpha=0.75)
-        """
+        #"""
+        ax.barbs(lon, lat, utempk, vtempk, transform=ccrs.PlateCarree(), linewidth=0.6, regrid_shape=10, length=6)
+        nlines = cint
+
+        c = ax.contour(lon, lat, ptempk, nlines, colors='r', alpha=1, linewidths=0.5)
+        plt.clabel(c, fmt="%d")
+        #"""
 
         #############
         self.draw_boundaries()
@@ -586,14 +589,15 @@ class FiPA():
         plt.colorbar(c, ticks=clevs)
 ###############
         nlines = cint #int((gh.max - gh.min)/cint)
-        c = ax.contour(grid_lon, grid_lat, ghvalues, nlines, cmap='hsv', linewidths=0.75, alpha=1)
+        contour_colors = cc.cm['kr_r']
+        c = ax.contour(grid_lon, grid_lat, ghvalues, nlines, cmap=contour_colors, linewidths=0.75, alpha=1)
         plt.clabel(c, fmt="%d")
 ###############
         #direction = ((((270 - np.arctan2(u.values, v.values) * 180 / np.pi) + 00) % 360)/90).astype(int)
         ukvalues = uvalues * knots_per_m #convert from meters per second to knots
         vkvalues = vvalues * knots_per_m
         ax.streamplot(grid_lon, grid_lat, uvalues, vvalues, density=3, transform=ccrs.PlateCarree(), linewidth=0.5, arrowsize=0.00001, color=(0.5, 0.5, 0.5, 0.5))
-        ax.barbs(grid_lon, grid_lat, ukvalues, vkvalues, transform=ccrs.PlateCarree(), linewidth=0.5, regrid_shape=10, length=5)
+        ax.barbs(grid_lon, grid_lat, ukvalues, vkvalues, transform=ccrs.PlateCarree(), linewidth=0.6, regrid_shape=10, length=6)
 ###############
         self.draw_boundaries()
 
@@ -606,17 +610,18 @@ class FiPA():
 if __name__ == '__main__':
     xsize = 19.2
     ysize = 10.8
-    ctxd = -1
+    lctxd = -1
+    sctxd = 1
     #"""
     fipa = FiPA(grib, 1, 2, 3, xsize, ysize)
     fipa.fig = plt.figure(figsize=(xsize, ysize), clear=False, tight_layout=False)
     fipa.fig.suptitle(fipa.suptitle)
-    fipa.plot_gph_vort_wind(850, 10, 1)
-    fipa.plot_gph_vort_wind(500, 10, 1)
-    fipa.plot_combined_rh_mslp(850, 500, 10, ctxd)
-    fipa.plot_pv(355, 10, ctxd)
-    fipa.plot_pv(330, 10, ctxd)
-    fipa.plot_vertical_shear(200, 800, 10, ctxd)
+    fipa.plot_gph_vort_wind(850, 10, sctxd)
+    fipa.plot_gph_vort_wind(500, 10, sctxd)
+    fipa.plot_combined_rh_mslp(850, 500, 10, lctxd)
+    fipa.plot_pv(355, 10, lctxd)
+    fipa.plot_pv(330, 10, lctxd)
+    fipa.plot_vertical_shear(200, 800, 10, lctxd)
     plt.savefig(grib + '_FiPA_' + str(latitude) + "_" + str(longitude) + '.png')
     plt.close()
     #"""
